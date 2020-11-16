@@ -4,19 +4,15 @@
 ## AnyKernel setup
 # begin properties
 properties() { '
-kernel.string=ExampleKernel by osm0sis @ xda-developers
+kernel.string=Fox Kernel for Redmi note 4/4x mido by jennifer1436 @xda-developers
 do.devicecheck=1
 do.modules=0
-do.systemless=1
+do.systemless=0
 do.cleanup=1
-do.cleanuponabort=0
-device.name1=maguro
-device.name2=toro
-device.name3=toroplus
-device.name4=tuna
-device.name5=
-supported.versions=
-supported.patchlevels=
+do.cleanuponabort=1
+device.name1=mido
+supported.versions=9-11
+supported.patchlevels=2019-09-
 '; } # end properties
 
 # shell variables
