@@ -4,7 +4,7 @@
 ## AnyKernel setup
 # begin properties
 properties() { '
-kernel.string=Fox Kernel for Redmi note 4/4x mido by jennifer1436 @xda-developers
+kernel.string=Sleepy Kernel for Redmi note 4/4x mido by jennifer1436 @xda-developers
 do.devicecheck=1
 do.modules=0
 do.systemless=0
