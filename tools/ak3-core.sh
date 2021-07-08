@@ -12,7 +12,7 @@ ramdisk=$home/ramdisk;
 split_img=$home/split_img;
 
 ### output/testing functions:
-# ui_print "<text>" [...]
+# ui_print "<text>" [..]
 ui_print() {
   until [ ! "$1" ]; do
     echo "ui_print $1
@@ -21,7 +21,7 @@ ui_print() {
   done;
 }
 
-# abort ["<text>" [...]]
+# abort ["<text>" [..]]
 abort() {
   ui_print " " "$@";
   exit 1;
@@ -39,7 +39,7 @@ file_getprop() {
 ###
 
 ### file/directory attributes functions:
-# set_perm <owner> <group> <mode> <file> [<file2> ...]
+# set_perm <owner> <group> <mode> <file> [<file2> ..]
 set_perm() {
   local uid gid mod;
   uid=$1; gid=$2; mod=$3;
@@ -48,7 +48,7 @@ set_perm() {
   chmod $mod "$@";
 }
 
-# set_perm_recursive <owner> <group> <dir_mode> <file_mode> <dir> [<dir2> ...]
+# set_perm_recursive <owner> <group> <dir_mode> <file_mode> <dir> [<dir2> ..]
 set_perm_recursive() {
   local uid gid dmod fmod;
   uid=$1; gid=$2; dmod=$3; fmod=$4;
@@ -68,7 +68,7 @@ split_boot() {
   local dumpfail;
 
   if [ ! -e "$(echo $block | cut -d\  -f1)" ]; then
-    abort "Invalid partition. Aborting...";
+    abort "Invalid partition. Aborting..";
   fi;
   if [ "$(echo $block | grep ' ')" ]; then
     block=$(echo $block | cut -d\  -f1);
@@ -134,7 +134,7 @@ split_boot() {
   fi;
 
   if [ $? != 0 -o "$dumpfail" ]; then
-    abort "Dumping/splitting image failed. Aborting...";
+    abort "Dumping/splitting image failed. Aborting..";
   fi;
   cd $home;
 }
@@ -155,13 +155,13 @@ unpack_ramdisk() {
   if [ -f ramdisk.cpio ]; then
     comp=$($bin/magiskboot decompress ramdisk.cpio 2>&1 | grep -v 'raw' | sed -n 's;.*\[\(.*\)\];\1;p');
   else
-    abort "No ramdisk found to unpack. Aborting...";
+    abort "No ramdisk found to unpack. Aborting..";
   fi;
   if [ "$comp" ]; then
     mv -f ramdisk.cpio ramdisk.cpio.$comp;
     $bin/magiskboot decompress ramdisk.cpio.$comp ramdisk.cpio;
     if [ $? != 0 ]; then
-      echo "Attempting ramdisk unpack with busybox $comp..." >&2;
+      echo "Attempting ramdisk unpack with busybox $comp.." >&2;
       $comp -dc ramdisk.cpio.$comp > ramdisk.cpio;
     fi;
   fi;
@@ -173,7 +173,7 @@ unpack_ramdisk() {
   cd $ramdisk;
   EXTRACT_UNSAFE_SYMLINKS=1 cpio -d -F $split_img/ramdisk.cpio -i;
   if [ $? != 0 -o ! "$(ls)" ]; then
-    abort "Unpacking ramdisk failed. Aborting...";
+    abort "Unpacking ramdisk failed. Aborting..";
   fi;
   if [ -d "$home/rdtmp" ]; then
     cp -af $home/rdtmp/* .;
@@ -217,14 +217,14 @@ repack_ramdisk() {
   if [ "$comp" ]; then
     $bin/magiskboot compress=$comp ramdisk-new.cpio;
     if [ $? != 0 ]; then
-      echo "Attempting ramdisk repack with busybox $comp..." >&2;
+      echo "Attempting ramdisk repack with busybox $comp.." >&2;
       $comp -9c ramdisk-new.cpio > ramdisk-new.cpio.$comp;
       [ $? != 0 ] && packfail=1;
       rm -f ramdisk-new.cpio;
     fi;
   fi;
   if [ "$packfail" ]; then
-    abort "Repacking ramdisk failed. Aborting...";
+    abort "Repacking ramdisk failed. Aborting..";
   fi;
 
   if [ -f "$bin/mkmtkhdr" -a -f "$split_img/boot.img-base" ]; then
@@ -319,11 +319,12 @@ flash_boot() {
           magisk_patched=$?;
         fi;
         if [ $((magisk_patched & 3)) -eq 1 ]; then
-          ui_print " " "Magisk detected! Patching kernel so reflashing Magisk is not necessary...";
+          ui_print " " "- Magisk detected!";
+          ui_print "  So reflashing Magisk isn't necessary..";
           comp=$($bin/magiskboot decompress kernel 2>&1 | grep -v 'raw' | sed -n 's;.*\[\(.*\)\];\1;p');
           ($bin/magiskboot split $kernel || $bin/magiskboot decompress $kernel kernel) 2>/dev/null;
           if [ $? != 0 -a "$comp" ]; then
-            echo "Attempting kernel unpack with busybox $comp..." >&2;
+            echo "Attempting kernel unpack with busybox $comp.." >&2;
             $comp -dc $kernel > kernel;
           fi;
           $bin/magiskboot hexpatch kernel 736B69705F696E697472616D667300 77616E745F696E697472616D667300;
@@ -333,7 +334,7 @@ flash_boot() {
           if [ "$comp" ]; then
             $bin/magiskboot compress=$comp kernel kernel.$comp;
             if [ $? != 0 ]; then
-              echo "Attempting kernel repack with busybox $comp..." >&2;
+              echo "Attempting kernel repack with busybox $comp.." >&2;
               $comp -9c kernel > kernel.$comp;
             fi;
             mv -f kernel.$comp kernel;
@@ -358,14 +359,14 @@ flash_boot() {
     $bin/magiskboot repack $nocompflag $bootimg $home/boot-new.img;
   fi;
   if [ $? != 0 ]; then
-    abort "Repacking image failed. Aborting...";
+    abort "Repacking image failed. Aborting..";
   fi;
   [ -f .magisk ] && touch $home/magisk_patched;
 
   cd $home;
   if [ -f "$bin/futility" -a -d "$bin/chromeos" ]; then
     if [ -f "$split_img/chromeos" ]; then
-      echo "Signing with CHROMEOS..." >&2;
+      echo "Signing with CHROMEOS.." >&2;
       $bin/futility vbutil_kernel --pack boot-new-signed.img --keyblock $bin/chromeos/kernel.keyblock --signprivate $bin/chromeos/kernel_data_key.vbprivk --version 1 --vmlinuz boot-new.img --bootloader $bin/chromeos/empty --config $bin/chromeos/empty --arch arm --flags 0x1;
     fi;
     [ $? != 0 ] && signfail=1;
@@ -378,19 +379,19 @@ flash_boot() {
       *) avbtype=boot;;
     esac;
     if [ "$(/system/bin/dalvikvm -Xnoimage-dex2oat -cp $bin/boot_signer-dexed.jar com.android.verity.BootSignature -verify boot.img 2>&1 | grep VALID)" ]; then
-      echo "Signing with AVBv1..." >&2;
+      echo "Signing with AVBv1.." >&2;
       /system/bin/dalvikvm -Xnoimage-dex2oat -cp $bin/boot_signer-dexed.jar com.android.verity.BootSignature /$avbtype boot-new.img $pk8 $cert boot-new-signed.img;
     fi;
   fi;
   if [ $? != 0 -o "$signfail" ]; then
-    abort "Signing image failed. Aborting...";
+    abort "Signing image failed. Aborting..";
   fi;
   mv -f boot-new-signed.img boot-new.img 2>/dev/null;
 
   if [ ! -f boot-new.img ]; then
-    abort "No repacked image found to flash. Aborting...";
+    abort "No repacked image found to flash. Aborting..";
   elif [ "$(wc -c < boot-new.img)" -gt "$(wc -c < boot.img)" ]; then
-    abort "New image larger than boot partition. Aborting...";
+    abort "New image larger than boot partition. Aborting..";
   fi;
   blockdev --setrw $block 2>/dev/null;
   if [ -f "$bin/flash_erase" -a -f "$bin/nandwrite" ]; then
@@ -403,7 +404,7 @@ flash_boot() {
     cat boot-new.img /dev/zero > $block 2>/dev/null || true;
   fi;
   if [ $? != 0 ]; then
-    abort "Flashing image failed. Aborting...";
+    abort "Flashing image failed. Aborting..";
   fi;
 }
 
@@ -422,7 +423,7 @@ flash_dtbo() {
   if [ "$dtbo" -a ! -f dtbo_flashed ]; then
     dtboblock=/dev/block/bootdevice/by-name/dtbo$slot;
     if [ ! -e "$dtboblock" ]; then
-      abort "dtbo partition could not be found. Aborting...";
+      abort "dtbo partition could not be found. Aborting..";
     fi;
     blockdev --setrw $dtboblock 2>/dev/null;
     ui_print " " "$dtboblock";
@@ -436,7 +437,7 @@ flash_dtbo() {
       cat $dtbo /dev/zero > $dtboblock 2>/dev/null || true;
     fi;
     if [ $? != 0 ]; then
-      abort "Flashing dtbo failed. Aborting...";
+      abort "Flashing dtbo failed. Aborting..";
     fi;
     touch dtbo_flashed;
   fi;
@@ -704,7 +705,7 @@ setup_ak() {
         esac;
       fi;
       if [ ! "$slot" -a "$is_slot_device" == 1 ]; then
-        abort "Unable to determine active slot. Aborting...";
+        abort "Unable to determine active slot. Aborting..";
       fi;
     ;;
   esac;
@@ -712,7 +713,7 @@ setup_ak() {
   # automate simple multi-partition setup for boot_img_hdr_v3 + vendor_boot
   cd $home;
   if [ -e "/dev/block/bootdevice/by-name/vendor_boot$slot" -a ! -f vendor_setup ] && [ -f dtb -o -d vendor_ramdisk -o -d vendor_patch ]; then
-    echo "Setting up for simple automatic vendor_boot flashing..." >&2;
+    echo "Setting up for simple automatic vendor_boot flashing.." >&2;
     (mkdir boot-files;
     mv -f Image* ramdisk patch boot-files;
     mkdir vendor_boot-files;
@@ -752,7 +753,7 @@ setup_ak() {
             if [ "$mtdpart" == "$part" ]; then
               mtdname=$(echo $mtdmount | cut -d: -f1);
             else
-              abort "Unable to determine mtd $block partition. Aborting...";
+              abort "Unable to determine mtd $block partition. Aborting..";
             fi;
             if [ -e /dev/mtd/$mtdname ]; then
               target=/dev/mtd/$mtdname;
@@ -774,7 +775,7 @@ setup_ak() {
       if [ "$target" ]; then
         block=$(ls $target 2>/dev/null);
       else
-        abort "Unable to determine $block partition. Aborting...";
+        abort "Unable to determine $block partition. Aborting..";
       fi;
     ;;
     *)
@@ -784,7 +785,7 @@ setup_ak() {
     ;;
   esac;
   if [ ! "$no_block_display" ]; then
-    ui_print "$block";
+    ui_print "  $block";
   fi;
 }
 ###
