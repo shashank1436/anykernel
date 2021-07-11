@@ -25,7 +25,7 @@ ramdisk_compression=auto;
 # import patching functions/variables - see for reference
 . tools/ak3-core.sh;
 
-# remove i/o scheduler properties from /product/build.prop
+## remove predefined i/o scheduler properties by @MrCarb0n
 PBP=/system/product/build.prop;
 PROP=persist.sys.io.scheduler
 if [ "$(grep -c $PROP $PBP)" == "1" ]; then
