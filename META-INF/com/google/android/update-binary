@@ -471,8 +471,7 @@ else
   ui_print "|       /____/_____/_____/_____/_/     /_/         |";
   ui_print "|               K   E   R   N   E   L              |";
   ui_print "|                                                  |";
-  ui_print "|                 mido | 4.9                       |";
-  ui_print "|           @shashank1436 | RedmiNote4/X           |";
+  ui_print "|     @shashank1436 | mido | 4.9 | RedmiNote4X     |";
   ui_print "+--------------------------------------------------+";
   ui_print " ";
 fi;
@@ -504,7 +503,7 @@ do_installaddon() {
     ui_print "|           Installing Add-on & Permissions        |";
     ui_print "|                by TIASH / @MrCarb0n              |";
     ui_print "|                                                  |";
-    ui_print "|             Custom thermal & powerhint           |";
+    ui_print "|             Custom thermal & Powerhint           |";
     ui_print "|                  by @shashank1436                |";
     ui_print "+--------------------------------------------------+";
     $BB mount -o rw,remount -t auto $P 2>/dev/null;
@@ -525,8 +524,8 @@ do_addoncheck() {
     ui_print "|         [ YES ]         |          [ NO ]        |";
     ui_print "|                         |                        |";
     ui_print "+--------------------------------------------------+";
-    ui_print "|      press chosen button within 5 seconds        |";
-    ui_print "|     else add-on will install automatically       |";
+    ui_print "|          choose option within 5 seconds          |";
+    ui_print "|      else add-on installation will aborted!      |";
     ui_print "+--------------------------------------------------+";
     TO() {
         if [ "$(getprop sys.boot_completed)" -eq "1" ] 2>/dev/null; then
@@ -540,14 +539,14 @@ do_addoncheck() {
       sleep 1; X=$((X + 1))
       if (`grep -q 'KEY_VOLUMEUP *DOWN' $AKHOME/events`); then
         ui_print " " "- Volume Up [+] button pressed!";
-        sleep 0.5 && ui_print "  Add-on installation Aborting.." && break;
+        sleep 0.5 && ui_print "  Add-on installing..";
         do_installaddon && break;
       elif (`grep -q 'KEY_VOLUMEDOWN *DOWN' $AKHOME/events`); then
         ui_print " " "- Volume Down [-] button pressed!";
-        sleep 0.5; ui_print "  Add-on installation Aborting.." && break;
+        sleep 0.5; ui_print "  Add-on installation Aborted.." && break;
       fi
       [ $X -gt 5 ] && ui_print " " "- Timeout! Argument not detected.." && \
-         sleep 0.5 && ui_print "  Add-on installation started!" && do_installaddon && break;
+         sleep 0.5 && ui_print "  Add-on installation Aborted.." && break;
       done
     rm $AKHOME/events
 }
