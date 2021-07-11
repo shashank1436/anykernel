@@ -4,7 +4,6 @@
 ## AnyKernel setup
 # begin properties
 properties() { '
-kernel.string=SleepyKernel for RedmiNote4/4x mido by jennifer1436 @ xda-developers
 do.devicecheck=1
 do.modules=0
 do.systemless=0

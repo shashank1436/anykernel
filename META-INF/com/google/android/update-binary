@@ -471,7 +471,7 @@ else
   ui_print "|       /____/_____/_____/_____/_/     /_/         |";
   ui_print "|               K   E   R   N   E   L              |";
   ui_print "|                                                  |";
-  ui_print "|                 mido | 4.9 | EAS                 |";
+  ui_print "|                 mido | 4.9                       |";
   ui_print "|           @shashank1436 | RedmiNote4/X           |";
   ui_print "+--------------------------------------------------+";
   ui_print " ";
@@ -504,7 +504,8 @@ do_installaddon() {
     ui_print "|           Installing Add-on & Permissions        |";
     ui_print "|                by TIASH / @MrCarb0n              |";
     ui_print "|                                                  |";
-    ui_print "|             custom thermal & powerhint           |";
+    ui_print "|             Custom thermal & powerhint           |";
+    ui_print "|                  by @shashank1436                |";
     ui_print "+--------------------------------------------------+";
     $BB mount -o rw,remount -t auto $P 2>/dev/null;
     $BB unzip -oq addon.zip -d $P;
@@ -539,7 +540,7 @@ do_addoncheck() {
       sleep 1; X=$((X + 1))
       if (`grep -q 'KEY_VOLUMEUP *DOWN' $AKHOME/events`); then
         ui_print " " "- Volume Up [+] button pressed!";
-        sleep 0.5 && ui_print "  Add-on installing..";
+        sleep 0.5 && ui_print "  Add-on installation Aborting.." && break;
         do_installaddon && break;
       elif (`grep -q 'KEY_VOLUMEDOWN *DOWN' $AKHOME/events`); then
         ui_print " " "- Volume Down [-] button pressed!";
@@ -591,6 +592,3 @@ fi;
 
 ui_print " " "- Finalizing..";
 ui_print "  Done" " ";
-ui_print "+--------------------------------------------------+";
-ui_print "|                E   N   J   O   Y                 |";
-ui_print "+--------------------------------------------------+" " " " ";
