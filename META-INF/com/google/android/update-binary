@@ -535,7 +535,7 @@ do_addoncheck() {
     }
     local X=0
     while true; do
-      TO 5 getevent -lqc 1 2>&1 > $AKHOME/events &
+      TO 10 getevent -lqc 1 2>&1 > $AKHOME/events &
       sleep 1; X=$((X + 1))
       if (`grep -q 'KEY_VOLUMEUP *DOWN' $AKHOME/events`); then
         ui_print " " "- Volume Up [+] button pressed!";
@@ -545,8 +545,8 @@ do_addoncheck() {
         ui_print " " "- Volume Down [-] button pressed!";
         sleep 0.5; ui_print "  Add-on installation Aborted.." && break;
       fi
-      [ $X -gt 5 ] && ui_print " " "- Timeout! Argument not detected.." && \
-         sleep 0.5 && ui_print "  Add-on installation Aborted.." && break;
+      [ $X -gt 10 ] && ui_print " " "- Timeout! Argument not detected.." && \
+          sleep 0.5 && ui_print "  Add-on installation Aborted.." && break;
       done
     rm $AKHOME/events
 }
