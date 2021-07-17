@@ -524,7 +524,7 @@ do_addoncheck() {
     ui_print "|         [ YES ]         |          [ NO ]        |";
     ui_print "|                         |                        |";
     ui_print "+--------------------------------------------------+";
-    ui_print "|          choose option within 5 seconds          |";
+    ui_print "|          choose option within 10 seconds          |";
     ui_print "|      else add-on installation will aborted!      |";
     ui_print "+--------------------------------------------------+";
     TO() {
